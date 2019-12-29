@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine.SceneManagement;
 
-public class GameDataControl : MonoBehaviour {
+public class GameDataController : MonoBehaviour {
 
     public static GameDataControl gdControl;
 
