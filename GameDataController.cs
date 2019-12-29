@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class GameDataController : MonoBehaviour {
 
-    public static GameDataControl gdControl;
+    public static GameDataController gdControl;
 
     public int coinsEarned;
     public int coinsSpent;
