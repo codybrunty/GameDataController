@@ -8,107 +8,108 @@ using UnityEngine.SceneManagement;
 public class GameDataControl : MonoBehaviour {
 
     public static GameDataControl gdControl;
-    
+
     public int coinsEarned;
     public int coinsSpent;
     public int coinsTotal;
-    public List<int> blocksUnlocked;
-    public List<List<int>> all_level_results;
-    public List<List<int>> blockSecretsUnlocked;
-    public bool hardUnlocked;
-    public List<int> daily_level_results;
-    public List<int> daily_easyLevel_Indexes;
-    public List<int> daily_hardLevel_Indexes;
+    public List<int> campaign_blocksUnlocked;
+    public List<List<int>> campaign_levelResults;
+    public List<List<int>> campaign_secretsUnlocked;
+    public bool dailyPuzzle_hardUnlocked;
+    public List<int> dailyPuzzle_levelResults;
+    public List<int> dailyPuzzle_easyLevels;
+    public List<int> dailyPuzzle_hardLevels;
     public int profile_puzzlesSolved;
 
     private void Awake() {
         //Check if game has been opened before
         bool firstTimeOpeningGame = PlayerPrefs.GetBool("firstTimeOpeningGame", true);
-        
+
         if (firstTimeOpeningGame) {
             PlayerPrefs.SetBool("firstTimeOpeningGame", false);
             Debug.Log("First Time Opening Game!");
-            ResetPlayerData();
+            //Write a new empty file
+            ResetGameData();
         }
-        
+
         //Singelton pattern
         if (gdControl == null) {
             DontDestroyOnLoad(gameObject);
             gdControl = this;
-            LoadPlayerData();
+            LoadGameData();
         }
-        else{
+        else {
             Destroy(gameObject);
         }
     }
 
-    public void SavePlayerData() {
+    public void SaveGameData() {
         //Write GameData to a binary file
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/game.dat");
 
-        PlayerData data = new PlayerData();
+        GameData data = new GameData();
 
         data.coinsEarned = coinsEarned;
         data.coinsSpent = coinsSpent;
         data.coinsTotal = coinsTotal;
-        data.blocksUnlocked = blocksUnlocked;
-        data.all_level_results = all_level_results;
-        data.blockSecretsUnlocked = blockSecretsUnlocked;
-        data.hardUnlocked = hardUnlocked;
-        data.daily_level_results = daily_level_results;
-        data.daily_easyLevel_Indexes = daily_easyLevel_Indexes;
-        data.daily_hardLevel_Indexes = daily_hardLevel_Indexes;
+        data.campaign_blocksUnlocked = campaign_blocksUnlocked;
+        data.campaign_levelResults = campaign_levelResults;
+        data.campaign_secretsUnlocked = campaign_secretsUnlocked;
+        data.dailyPuzzle_hardUnlocked = dailyPuzzle_hardUnlocked;
+        data.dailyPuzzle_levelResults = dailyPuzzle_levelResults;
+        data.dailyPuzzle_easyLevels = dailyPuzzle_easyLevels;
+        data.dailyPuzzle_hardLevels = dailyPuzzle_hardLevels;
         data.profile_puzzlesSolved = profile_puzzlesSolved;
 
         bf.Serialize(file, data);
         file.Close();
 
-        Debug.Log("Saved Player Data To Local File");
+        Debug.Log("Saved GameData To Local File");
     }
 
-    public void LoadPlayerData() {
+    public void LoadGameData() {
         //If GameData exists read it into the controller
         if (File.Exists(Application.persistentDataPath + "/game.dat")) {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/game.dat", FileMode.Open);
-            PlayerData data = (PlayerData)bf.Deserialize(file);
+            GameData data = (GameData)bf.Deserialize(file);
             file.Close();
-            
+
             coinsEarned = data.coinsEarned;
             coinsSpent = data.coinsSpent;
             coinsTotal = data.coinsTotal;
-            blocksUnlocked = data.blocksUnlocked;
-            all_level_results = data.all_level_results;
-            blockSecretsUnlocked = data.blockSecretsUnlocked;
-            hardUnlocked = data.hardUnlocked;
-            daily_level_results = data.daily_level_results;
-            daily_easyLevel_Indexes = data.daily_easyLevel_Indexes;
-            daily_hardLevel_Indexes = data.daily_hardLevel_Indexes;
+            campaign_blocksUnlocked = data.campaign_blocksUnlocked;
+            campaign_levelResults = data.campaign_levelResults;
+            campaign_secretsUnlocked = data.campaign_secretsUnlocked;
+            dailyPuzzle_hardUnlocked = data.dailyPuzzle_hardUnlocked;
+            dailyPuzzle_levelResults = data.dailyPuzzle_levelResults;
+            dailyPuzzle_easyLevels = data.dailyPuzzle_easyLevels;
+            dailyPuzzle_hardLevels = data.dailyPuzzle_hardLevels;
             profile_puzzlesSolved = data.profile_puzzlesSolved;
-            
-            Debug.Log("Loaded Player Data from Local File");
+
+            Debug.Log("Loaded GameData from Local File");
         }
-        //If GameData doesn't exist Reset Player Data and reload scene
+        //If GameData doesn't exist Reset GameData and reload scene
         else {
-            Debug.Log("No Player Data found re-creating Player Data");
-            ResetPlayerData();
-            //Reload scene after resetting player data
+            Debug.Log("No GameData found re-creating GameData");
+            ResetGameData();
+            //Reload scene after resetting GameData
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
-    public void ResetPlayerData() {
+    public void ResetGameData() {
         //Write new empty GameData to a binary file
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/game.dat");
-        PlayerData data = new PlayerData();
+        GameData data = new GameData();
 
         data.coinsEarned = 0;
         data.coinsSpent = 0;
         data.coinsTotal = 0;
-        data.blocksUnlocked = new List<int> { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        data.all_level_results = new List<List<int>> {
+        data.campaign_blocksUnlocked = new List<int> { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        data.campaign_levelResults = new List<List<int>> {
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -119,7 +120,7 @@ public class GameDataControl : MonoBehaviour {
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }};
-        data.blockSecretsUnlocked = new List<List<int>> {
+        data.campaign_secretsUnlocked = new List<List<int>> {
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -130,8 +131,8 @@ public class GameDataControl : MonoBehaviour {
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 },
             new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 }};
-        data.hardUnlocked = false;
-        data.daily_level_results = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        data.dailyPuzzle_hardUnlocked = false;
+        data.dailyPuzzle_levelResults = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         data.daily_easyLevel_Indexes = new List<int> { 0, 0, 0, 0, 0 };
         data.daily_hardLevel_Indexes = new List<int> { 0, 0, 0, 0, 0 };
         data.profile_puzzlesSolved = 0;
@@ -139,24 +140,25 @@ public class GameDataControl : MonoBehaviour {
         bf.Serialize(file, data);
         file.Close();
 
-        Debug.Log("Reset Player Data in Local File");
-        LoadPlayerData();
+        Debug.Log("Reset GameData to Local File");
+        LoadGameData();
     }
 
 }
 
-
+//Class for the GameData to hold all the variables
 [Serializable]
-class PlayerData {
+class GameData {
     public int coinsEarned;
     public int coinsSpent;
     public int coinsTotal;
-    public List<int> blocksUnlocked;
-    public List<List<int>> all_level_results;
-    public List<List<int>> blockSecretsUnlocked;
-    public bool hardUnlocked;
-    public List<int> daily_level_results;
-    public List<int> daily_easyLevel_Indexes;
-    public List<int> daily_hardLevel_Indexes;
+    public List<int> campaign_blocksUnlocked;
+    public List<List<int>> campaign_levelResults;
+    public List<List<int>> campaign_secretsUnlocked;
+    public bool dailyPuzzle_hardUnlocked;
+    public List<int> dailyPuzzle_levelResults;
+    public List<int> dailyPuzzle_easyLevels;
+    public List<int> dailyPuzzle_hardLevels;
     public int profile_puzzlesSolved;
 }
+
